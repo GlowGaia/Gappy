@@ -1,0 +1,28 @@
+{
+    "name": "glowgaia/gappy",
+    "description": "Gappy - how I imagine \"G API\" is pronounced - is exactly that; an API for GaiaOnline. Rid yourself of repetitive boilerplate code and build your custom Gaia application today!",
+    "type": "library",
+    "require": {
+        "glowgaia/grabbit": "^0.1.0@beta"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Glowgaia\\Gappy\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Sheldon Corcoran",
+            "email": "awesomolocity@gmail.com"
+        }
+    ]
+}
