@@ -1,5 +1,5 @@
 <?php
-namespace Tests;
+namespace Gappy\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Gappy\User;
