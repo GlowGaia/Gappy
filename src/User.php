@@ -5,9 +5,6 @@ namespace Glowgaia\Gappy;
 use GlowGaia\Grabbit\Grabbit;
 
 class User{
-
-    private $grabbit;
-
     public $id;
     public $username;
 
@@ -38,61 +35,71 @@ class User{
     public $gender;
 
 
-    public function __construct($id){
-        $this->grabbit = new Grabbit();
+    public function __construct($userdata = null){
+        $this->loadUser($userdata);
 
-        $user = $this->grabbit->it(102, [$id])->grab()->get(0);
+        return $this;
+    }
 
-        $this->id = $user->get('gaia_id');
-        $this->username = $user->get('username');
-        $this->avatar = $user->get('avatar');
-        $this->user_level = $user->get('user_level');
-        $this->filter_level = $user->get('filter_level');
-        $this->sushi_id = $user->get('sushi_id');
-        $this->session_id = $user->get('session_id');
-        $this->room_id = $user->get('room_id');
-        $this->user_active = $user->get('user_active');
-        $this->user_pms = $user->get('user_pms');
-        $this->towns_address = $user->get('towns_address');
-        $this->avatar_url = $user->get('avatar_url');
-        $this->account_age = $user->get('account_age');
-        $this->gender = $user->get('gender');
+    protected function loadUser($userdata){
+        if($userdata){
+            foreach ($userdata as $property => $value) {
+                if (property_exists($this, $property)) {
+                    $this->$property = $value;
+                }
+                elseif($property === 'gaia_id'){
+                    $this->id = $value;
+                }
+            }
+        }
+    }
+
+    protected function fetchUser($query = null, $method = 102){
+        $response = Grabbit::make($method, $query)->grab()->get(0);
+
+        if($response && $response->has('gaia_id')){
+            $this->loadUser($response);
+        }
 
         return $this;
     }
 
     public static function byId($id){
-        return new self($id);
+        $user = (new User)->fetchUser($id);
+
+        return $user;
     }
+
     public static function byEmail($email){
-        $grabbit = new Grabbit();
-
-        $response = $grabbit->it(102, [$email])->grab()->get(0);
-
-        $user = new self($response->get('gaia_id'));
-
+        $user = (new User)->fetchUser($email);
         $user->email = $email;
 
         return $user;
     }
 
     public static function byUsername($username){
-        $grabbit = new Grabbit();
-
-        $response = $grabbit->it(102, [$username])->grab()->get(0);
-
-        $user = new self($response->get('gaia_id'));
+        if($username === "3.14"){
+            $username = "3-14";
+        }
+        $user = (new User)->fetchUser($username);
 
         return $user;
     }
 
     public static function bySid($session_id){
-        $grabbit = new Grabbit();
-
-        $response = $grabbit->it(107, [$session_id])->grab()->get(0);
-
-        $user = new self($response->get('gaia_id'));
+        $user = (new User)->fetchuser($session_id, 107);
 
         return $user;
+    }
+
+    public function getAquariumId(){
+        if($this->id){
+            $aquarium_id = Grabbit::make(6513, [$this->id])->grab()[0];
+            if(is_numeric($aquarium_id) && $aquarium_id > 0){
+                return $aquarium_id;
+            }
+        }
+
+        return null;
     }
 }

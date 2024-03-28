@@ -15,4 +15,8 @@ class UserTest extends TestCase{
     public function test_id_of_username_awesomolocity_is_19722273(){
         $this->assertSame(19722273, User::byUsername('awesomolocity')->id);
     }
+
+    public function test_aquarium_id_lookup_works(){
+        $this->assertSame('9116373', User::byId(37285493)->getAquariumId());
+    }
 }
